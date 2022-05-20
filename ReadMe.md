@@ -1,6 +1,6 @@
 HomeWork 15
 
-inluding:
+including:
 animal.db
 main.py
 query_tables.sql
