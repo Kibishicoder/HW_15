@@ -18,14 +18,16 @@ def main():
     @app.route('/animals/<int:idx>')
     def search_by_animal(idx):
         query = f"""
-            SELECT 
-                id 
-                , age_upon_outcome 
-                , animal_id 
-                , animal_type 
+            SELECT
+                id
+                , age_upon_outcome
+                , animal_id
+                , animal_type
                 , date_of_birth
                 , "name"
-                , breed   
+                , breed
+                , outcome_id
+                , animal_color
             FROM animals_final
             WHERE id == {idx}
         """
@@ -38,7 +40,9 @@ def main():
                 'animal_type': animal[3],
                 'date_of_birth': animal[4],
                 'name': animal[5],
-                'breed': animal[6]
+                'breed': animal[6],
+                'outcome_id': animal[7],
+                'animal_color': animal[8]
             })
         return jsonify(response_json)
 
