@@ -1,8 +1,5 @@
-HomeWork 15
+HomeWork 15 Rebuild
 
-including:
-animal.db
-main.py
-query_tables.sql
+
 
 
