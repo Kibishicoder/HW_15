@@ -1,53 +1,34 @@
 from flask import Flask, jsonify
 import sqlite3
+import queries
+
+app = Flask(__name__)
+DATA_PATH = 'animal.db'
 
 
-def main():
-    app = Flask(__name__)
-    app.config['JSON_AS_ASCII'] = False
-    app.config['DEBUG'] = True
+def serialize_rows(row: sqlite3.Row):
+    return {key: row[key] for key in row.keys()}
 
-    def db_connect(query):
-        connection = sqlite3.connect('animal.db')
-        cursor = connection.cursor()
-        cursor.execute(query)
-        result = cursor.fetchall()
-        connection.close()
-        return result
 
-    @app.route('/animals/<int:idx>')
-    def search_by_animal(idx):
-        query = f"""
-            SELECT
-                id
-                , age_upon_outcome
-                , animal_id
-                , animal_type
-                , date_of_birth
-                , "name"
-                , breed
-                , outcome_id
-                , animal_color
-            FROM animals_final
-            WHERE id == {idx}
-        """
-        response = db_connect(query)
-        response_json = []
-        for animal in response:
-            response_json.append({
-                'age_upon_outcome': animal[1],
-                'animal_id': animal[2],
-                'animal_type': animal[3],
-                'date_of_birth': animal[4],
-                'name': animal[5],
-                'breed': animal[6],
-                'outcome_id': animal[7],
-                'animal_color': animal[8]
-            })
-        return jsonify(response_json)
+@app.route('/<animal_id>')
+def search_by_animal(animal_id):
 
-    app.run(port=7070)
+    conn: sqlite3.Connection = app.config['db']
+    cursor = conn.cursor()
+
+    cursor.execute(queries.GET_ANIMAL_DATA_BY_ID, (animal_id, ))
+    row = cursor.fetchone()
+
+    cursor.close()
+
+    return jsonify(serialize_rows(row))
 
 
 if __name__ == '__main__':
-    main()
+    connection = sqlite3.connect(DATA_PATH, check_same_thread=False)
+    connection.row_factory = sqlite3.Row
+    app.config['db'] = connection
+    try:
+        app.run(debug=True, port=7070)
+    except KeyboardInterrupt:
+        connection.close()
