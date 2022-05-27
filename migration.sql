@@ -37,7 +37,7 @@ SELECT
     outcome_month,
     outcome_year,
     animal_type.id as type_id,
-    animal_type.breed_id as breed_id,
+    animal_breed.id as breed_id,
     animal_color1.id as color1_id,
     animal_color2.id as color2_id,
     outcome_subtype.id as outcome_subtype_id,
